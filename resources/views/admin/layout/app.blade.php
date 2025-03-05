@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taxi Service Management</title>
+    <title>Admin - Taxi Service Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"> <!-- Font Awesome -->
 
@@ -64,7 +64,6 @@
             padding: 20px;
             color: white;
             overflow: hidden;
-
         }
 
             /* Gradient Overlay */
@@ -173,8 +172,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
         <div class="container">
             <!-- Brand -->
-            <a class="navbar-brand" href="{{ route('home') }}">
-                <i class="fas fa-taxi me-2"></i> Taxi Service
+            <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
+                <i class="fas fa-taxi me-2"></i> Taxi Service Admin
             </a>
             <!-- Navbar Toggler -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -183,110 +182,59 @@
             <!-- Navbar Links -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <!-- Home -->
+                    <!-- Dashboard -->
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
-                            <i class="fas fa-home me-2"></i> Home
+                        <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                         </a>
                     </li>
 
-                    <!-- Service -->
+                    <!-- Manage Bookings -->
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('service') ? 'active' : '' }}" href="{{ route('service') }}">
-                            <i class="fas fa-car me-2"></i> Service
+                        <a class="nav-link {{ request()->routeIs('admin.bookings') ? 'active' : '' }}" href="{{ route('admin.bookings') }}">
+                            <i class="fas fa-book me-2"></i> Manage Bookings
                         </a>
                     </li>
 
-                    @if(Auth::check())
-                    <!-- Links for Logged-In Users -->
+                    <!-- Manage Cars -->
                     <li class="nav-item">
-                        <!-- Book Car Link -->
-                        <a class="nav-link {{ request()->routeIs('booking.index') ? 'active' : '' }}" href="{{ route('booking.index') }}">
-                            <i class="fas fa-car-side me-2"></i> Book a Car
+                        <a class="nav-link {{ request()->routeIs('admin.cars') ? 'active' : '' }}" href="{{ route('admin.cars') }}">
+                            <i class="fas fa-car me-2"></i> Manage Cars
                         </a>
                     </li>
 
-
-
+                    <!-- Manage Routes -->
                     <li class="nav-item">
-                        <!-- History Link -->
-                        <a class="nav-link {{ request()->routeIs('history') ? 'active' : '' }}" href="{{ route('history') }}">
-                            <i class="fas fa-history me-2"></i> Booking History
+                        <a class="nav-link {{ request()->routeIs('admin.routes') ? 'active' : '' }}" href="{{ route('admin.routes') }}">
+                            <i class="fas fa-road me-2"></i> Manage Routes
                         </a>
                     </li>
+
+                    <!-- Manage Users -->
                     <li class="nav-item">
-                        <!-- Profile Link -->
-                        <a class="nav-link {{ request()->routeIs('profile') ? 'active' : '' }}" href="{{ route('profile') }}">
-                            <i class="fas fa-user-circle me-2"></i> My Profile
+                        <a class="nav-link {{ request()->routeIs('admin.users') ? 'active' : '' }}" href="{{ route('admin.users') }}">
+                            <i class="fas fa-users me-2"></i> Manage Users
                         </a>
                     </li>
-                @endif
+                </ul>
 
-
-                        <!-- More Dropdown -->
-                <li class="nav-item dropdown {{ in_array(request()->route()->getName(), ['about', 'contact', 'faqs']) ? 'active' : '' }}">
-                    <a class="nav-link dropdown-toggle {{ request()->routeIs('about') || request()->routeIs('contact') || request()->routeIs('faqs') ? 'active' : '' }}" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-ellipsis-h me-2"></i> More
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li>
-                            <a class="dropdown-item {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">
-                                <i class="fas fa-info-circle me-2"></i> About Us
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">
-                                <i class="fas fa-envelope me-2"></i> Contact
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item {{ request()->routeIs('faqs') ? 'active' : '' }}" href="{{ route('faqs') }}">
-                                <i class="fas fa-question-circle me-2"></i> FAQs
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-
-                <!-- Login/Signup or Username/Logout -->
+                <!-- Admin Logout -->
                 <div class="d-flex ms-lg-3">
-                    @if(Auth::check())
-                        <!-- Display Username and Logout if Logged In -->
-                        <span class="navbar-text text-white me-3">
-                            Welcome, {{ session('user_name') }}
-                        </span>
+                    <span class="navbar-text text-white me-3">
+                        Welcome, Admin
+                    </span>
 
-                        <!-- Logout Form -->
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="button" class="btn btn-outline-light" id="logout-btn">
-                                <i class="fas fa-sign-out-alt me-2"></i> Logout
-                            </button>
-                        </form>
-                    @else
-                        <!-- Show Login and Sign Up buttons if Not Logged In -->
-                        <a href="{{ route('login') }}" class="btn btn-outline-light me-2">
-                            <i class="fas fa-sign-in-alt me-2"></i> Login
-                        </a>
-                        <a href="{{ route('register') }}" class="btn btn-warning">
-                            <i class="fas fa-user-plus me-2"></i> Sign Up
-                        </a>
-                    @endif
+                    <!-- Logout Form -->
+                    <form id="logout-form" action="{{ route('admin.logout') }}" method="POST">
+                        @csrf
+                        <button type="button" class="btn btn-outline-light" id="logout-btn">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </nav>
-
-    <div class="hero-section @if(in_array(request()->route()->getName(), ['login','service', 'register','booking.index','booking.success', 'history','profile','about','contact','faqs','car-booking.index','booking.step1','booking.step2','booking.step3','booking.step4','booking.confirmation'])) d-none @endif">
-        <div class="hero-content">
-            <h1>Your Ride, Your Way</h1>
-            <p>Reliable, Affordable & Safe Taxi Services at Your Fingertips</p>
-            <a href="{{ route('booking.index') }}" class="hero-btn">Book a Ride</a>
-        </div>
-    </div>
-
-
 
     <div class="content">
         @yield('content')
@@ -324,3 +272,40 @@
     </script>
 </body>
 </html>
+@if(session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: "{{ session('success') }}",
+            showConfirmButton: true,
+            timerProgressBar: true // Show a progress bar
+        });
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: "{{ session('error') }}",
+            timer: 3000, // Auto close after 3 seconds
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+    </script>
+@endif
+
+@if($errors->any())
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: "{{ $errors->first() }}",
+            timer: 3000, // Auto close after 3 seconds
+            showConfirmButton: false,
+            timerProgressBar: true
+        });
+    </script>
+@endif

@@ -101,7 +101,7 @@
         <!-- Call to Action -->
         <div class="text-center mt-5">
             <p class="lead">Ready to book your ride? Experience fast, safe, and reliable taxi services now.</p>
-            <a href="{{ route('car-booking.step1') }}" class="btn btn-warning btn-lg shadow-lg">
+            <a href="#" class="btn btn-warning btn-lg shadow-lg">
                 <i class="fas fa-taxi me-2"></i> Book a Ride
             </a>
         </div>

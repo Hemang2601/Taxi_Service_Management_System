@@ -112,7 +112,7 @@
     <div class="mt-5 text-center">
         <h2 class="text-secondary fw-bold">Ready to Start Your Journey?</h2>
         <p class="text-muted lead">Book your ride or car today and experience hassle-free travel.</p>
-        <a href="{{ route('car-booking.step1') }}" class="btn btn-warning btn-lg mt-3">Book Now</a>
+        <a href="{{ route('booking.index') }}" class="btn btn-warning btn-lg mt-3">Book Now</a>
     </div>
 </div>
 
