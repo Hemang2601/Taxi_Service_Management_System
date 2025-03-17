@@ -34,7 +34,7 @@
 
     <!-- Tab Content -->
     <div class="tab-content">
-        <!-- Pending Bookings -->
+        {{-- <!-- Pending Bookings -->
         <div class="tab-pane fade show active" id="pending">
             @include('admin.bookings.partials.booking_table', ['bookings' => $pendingBookings, 'status' => 'pending'])
         </div>
@@ -57,7 +57,7 @@
         <!-- Booking History -->
         <div class="tab-pane fade" id="history">
             @include('admin.bookings.partials.booking_table', ['bookings' => $historyBookings, 'status' => 'history'])
-        </div>
+        </div> --}}
     </div>
 </div>
 @endsection

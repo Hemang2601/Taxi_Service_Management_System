@@ -1,363 +1,254 @@
 @extends('layouts.app')
 
-
 @section('content')
-<div class="container mt-5">
-    <h2 class="text-center text-primary fw-bold">Car Booking</h2>
+<div class="container py-5">
+    <div class="card shadow-lg rounded-4 border-0">
+        <div class="card-body p-5">
+            <h3 class="text-center fw-bold mb-4">Taxi Booking</h3>
 
-    <!-- Progress Bar -->
-    <div class="progress mb-4">
-        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success"
-             role="progressbar" style="width: 0%;" id="progressBar"></div>
-    </div>
-
-    <div class="row">
-        <!-- Sidebar Steps -->
-        <div class="col-md-3">
-            <ul class="list-group shadow-sm">
-                <li class="list-group-item active" id="step1-nav"><i class="fas fa-car"></i> 1. Select Drive Type</li>
-                <li class="list-group-item" id="step2-nav"><i class="fas fa-list"></i> 2. Select Car Type</li>
-                <li class="list-group-item" id="step3-nav"><i class="fas fa-car-side"></i> 3. Select Car</li>
-                <li class="list-group-item" id="step4-nav"><i class="fas fa-calendar-check"></i> 4. Booking Details</li>
-            </ul>
-        </div>
-
-        <!-- Booking Form -->
-        <div class="col-md-9">
-            <div class="card shadow-lg p-4 m-">
-                <form action="{{ route('booking.submit') }}" method="POST">
-                    @csrf
-
-                    <!-- Step 1: Select Drive Type -->
-                    <div id="step1" class="container mt-4">
-                        <h4 class="text-primary fw-bold mb-3">Select Drive Type</h4>
-
-                        <div class="row">
-                            <!-- Self Drive Option -->
-                            <div class="col-md-6">
-                                <label class="drive-option card shadow-sm p-3 border rounded text-center">
-                                    <input type="radio" class="d-none" name="drive_type" value="Self Drive" required>
-                                    <div class="option-content">
-                                        <i class="fas fa-car-side text-primary fa-3x mb-2"></i>
-                                        <h5 class="fw-bold">Self Drive</h5>
-                                        <p class="text-muted small">Drive the car yourself with full freedom.</p>
-                                    </div>
-                                </label>
-                            </div>
-
-                            <!-- With Driver Option -->
-                            <div class="col-md-6">
-                                <label class="drive-option card shadow-sm p-3 border rounded text-center">
-                                    <input type="radio" class="d-none" name="drive_type" value="With Driver" required>
-                                    <div class="option-content">
-                                        <i class="fas fa-user-tie text-primary fa-3x mb-2"></i>
-                                        <h5 class="fw-bold">With Driver</h5>
-                                        <p class="text-muted small">Relax while a professional driver takes you to your destination.</p>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-primary mt-4 next-step w-100">
-                            Next <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-
-
-                    <!-- Step 2: Select Car Type -->
-                    <div id="step2" class="d-none container mt-4">
-                        <h4 class="text-primary fw-bold mb-3">Select Car Type</h4>
-
-                        <div class="row">
-                            <!-- Sedan Option -->
-                            <div class="col-md-4">
-                                <label class="car-option card shadow-sm p-3 border rounded text-center">
-                                    <input type="radio" class="d-none" name="car_type" value="Sedan" required>
-                                    <div class="option-content">
-                                        <img src="https://www.pngplay.com/wp-content/uploads/13/Sedan-PNG-Photos.png" alt="Sedan" class="car-img">
-                                        <h5 class="fw-bold mt-2">Sedan</h5>
-                                        <p class="text-muted small">Comfortable & fuel-efficient.</p>
-                                    </div>
-                                </label>
-                            </div>
-
-                            <!-- SUV Option -->
-                            <div class="col-md-4">
-                                <label class="car-option card shadow-sm p-3 border rounded text-center">
-                                    <input type="radio" class="d-none" name="car_type" value="SUV" required>
-                                    <div class="option-content">
-                                        <img src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/202211/1-platinum-white-pearl_0-sixteen_nine.png?VersionId=kc_gH7C5KdFxfnyAgMmHVZ5lvpH2xBPd" alt="SUV" class="car-img">
-                                        <h5 class="fw-bold mt-2">SUV</h5>
-                                        <p class="text-muted small">Spacious & powerful for all terrains.</p>
-                                    </div>
-                                </label>
-                            </div>
-
-                            <!-- Luxury Option -->
-                            <div class="col-md-4">
-                                <label class="car-option card shadow-sm p-3 border rounded text-center">
-                                    <input type="radio" class="d-none" name="car_type" value="Luxury" required>
-                                    <div class="option-content">
-                                        <img src="https://www.pngplay.com/wp-content/uploads/9/Luxury-Car-PNG-Free-File-Download.png" alt="Luxury" class="car-img">
-                                        <h5 class="fw-bold mt-2">Luxury</h5>
-                                        <p class="text-muted small">Premium comfort & features.</p>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Navigation Buttons -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <button class="btn btn-secondary prev-step"><i class="fas fa-arrow-left"></i> Previous</button>
-                            <button class="btn btn-primary next-step">Next <i class="fas fa-arrow-right"></i></button>
-                        </div>
-                    </div>
-
-
-                    <?php
-                    $cars = [
-    [
-        'name' => 'Car A',
-        'image' => 'https://www.pngplay.com/wp-content/uploads/13/Sedan-PNG-Photos.png',
-        'description' => 'Description for Car A.'
-    ],
-    [
-        'name' => 'Car B',
-        'image' => 'https://pngimg.com/d/bmw_PNG99542.png',
-        'description' => 'Description for Car B.'
-    ],
-    [
-        'name' => 'Car C',
-        'image' => 'https://www.pngall.com/wp-content/uploads/2018/04/Sedan-PNG-Clipart.png',
-        'description' => 'Description for Car C.'
-    ],
-    [
-        'name' => 'Car D',
-        'image' => 'https://lakshmihyundai.s3.ap-south-1.amazonaws.com/models/display_images/1679903528.png',
-        'description' => 'Description for Car D.'
-    ],
-    [
-        'name' => 'Car E',
-        'image' => 'https://lakshmihyundai.s3.ap-south-1.amazonaws.com/models/display_images/1662110515.png',
-        'description' => 'Description for Car E.'
-    ],
-    [
-        'name' => 'Car F',
-        'image' => 'https://lakshmihyundai.s3.ap-south-1.amazonaws.com/models/display_images/1656409788.png',
-        'description' => 'Description for Car F.'
-    ],
-    [
-        'name' => 'Car G',
-        'image' => 'https://lakshmihyundai.s3.ap-south-1.amazonaws.com/models/display_images/1659615610.png',
-        'description' => 'Description for Car G.'
-    ],
-    [
-        'name' => 'Car H',
-        'image' => 'https://lakshmihyundai.s3.ap-south-1.amazonaws.com/models/display_images/1689152983.png',
-        'description' => 'Description for Car H.'
-    ],
-    [
-        'name' => 'Car I',
-        'image' => 'https://lakshmihyundai.s3.ap-south-1.amazonaws.com/models/display_images/1675149576.png',
-        'description' => 'Description for Car I.'
-    ],
-    [
-        'name' => 'Car J',
-        'image' => 'https://lakshmihyundai.s3.ap-south-1.amazonaws.com/models/display_images/1662112191.png',
-        'description' => 'Description for Car J.'
-    ]
-];
-                    ?>
-                    <!-- Step 3: Select Car -->
-                    <div id="step3" class="d-none container mt-4">
-                        <h4 class="text-primary fw-bold mb-3">Select Your Car</h4>
-                        <div class="row">
-                            <?php foreach ($cars as $car): ?>
-                                <div class="col-md-3 col-sm-6 mb-3">
-                                    <label class="car-option card shadow-sm p-3 border rounded text-center">
-                                        <input type="radio" class="d-none" name="car" value="<?php echo htmlspecialchars($car['name']); ?>" required>
-                                        <div class="option-content">
-                                            <img src="<?php echo htmlspecialchars($car['image']); ?>" alt="<?php echo htmlspecialchars($car['name']); ?>" class="car-img">
-                                            <h6 class="fw-bold mt-2"><?php echo htmlspecialchars($car['name']); ?></h6>
-                                            <p class="text-muted small"><?php echo htmlspecialchars($car['description']); ?></p>
-                                        </div>
-                                    </label>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <!-- Navigation Buttons -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <button class="btn btn-secondary prev-step"><i class="fas fa-arrow-left"></i> Previous</button>
-                            <button class="btn btn-primary next-step">Next <i class="fas fa-arrow-right"></i></button>
-                        </div>
-                    </div>
-
-                  <!-- Step 4: Booking Details -->
-<div id="step4" class="d-none container mt-4">
-    <div class="card shadow-lg p-4 border-0 rounded">
-        <h4 class="text-primary fw-bold text-center">Enter Booking Details</h4>
-
-        <!-- Pickup Location -->
-        <div class="input-group mt-3">
-            <span class="input-group-text bg-light"><i class="fas fa-map-marker-alt text-primary"></i></span>
-            <input type="text" class="form-control" name="pickup_location" placeholder="Enter Pickup Location" required>
-        </div>
-
-        <!-- Drop Location -->
-        <div class="input-group mt-3">
-            <span class="input-group-text bg-light"><i class="fas fa-map-marker text-danger"></i></span>
-            <input type="text" class="form-control" name="drop_location" placeholder="Enter Drop Location" required>
-        </div>
-
-        <!-- Pickup Date & Time -->
-        <div class="input-group mt-3">
-            <span class="input-group-text bg-light"><i class="fas fa-calendar-alt text-success"></i></span>
-            <input type="datetime-local" class="form-control" name="pickup_date" required>
-        </div>
-
-        <!-- Phone Number -->
-        <div class="input-group mt-3">
-            <span class="input-group-text bg-light"><i class="fas fa-phone text-warning"></i></span>
-            <input type="tel" class="form-control" name="phone_number" placeholder="Enter Phone Number" required>
-        </div>
-
-        <!-- Navigation Buttons -->
-        <div class="d-flex justify-content-between mt-4">
-            <button class="btn btn-secondary prev-step px-4"><i class="fas fa-arrow-left"></i> Previous</button>
-            <button class="btn btn-success px-4">Confirm Booking <i class="fas fa-check"></i></button>
-        </div>
-    </div>
-</div>
-
-                </form>
+            <!-- Step Progress -->
+            <div class="progress mb-4">
+                <div id="progressBar" class="progress-bar bg-success" style="width: 25%;"></div>
             </div>
+
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+
+            <form action="{{ route('booking.process') }}" method="POST">
+                @csrf
+
+                <!-- Step 1: Select Drive Type -->
+                <div class="step">
+                    <h5 class="fw-bold">Step 1: Choose Drive Type</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Select Drive Type</label>
+                        <select class="form-select" id="driveType" name="drive_type" required>
+                            <option value="">Choose...</option>
+                            <option value="Self-Drive">Self-Drive</option>
+                            <option value="Driver-Driven">Driver-Driven</option>
+                        </select>
+                    </div>
+
+                    <!-- Route Selection (Shown only for Driver-Driven) -->
+                    <div class="mb-3 d-none" id="routeSelection">
+                        <label class="form-label">Select Route</label>
+                        <select class="form-select" id="route" name="route_id">
+                            <option value="">Choose...</option>
+                            @foreach($routes as $route)
+                                <option value="{{ $route->id }}">{{ $route->route_name }} ({{ $route->start_location }} to {{ $route->end_location }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+
+
+                <!-- Step 2: Select Car Type -->
+                <div class="step d-none">
+                    <h5 class="fw-bold">Step 2: Select Car Type</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Select Car Type</label>
+                        <select class="form-select" id="carType" name="car_type" required>
+                            <option value="">Choose...</option>
+                            @foreach($carTypes as $type)
+                                <option value="{{ $type }}">{{ $type }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Step 3: Select Car -->
+                <div class="step d-none">
+                    <h5 class="fw-bold">Step 3: Choose Your Car</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Select Car</label>
+                        <select class="form-select" id="carId" name="car_id" required>
+                            <option value="">Choose...</option>
+                        </select>
+                    </div>
+
+                    <!-- Car Image Preview -->
+                    <div class="mb-3 text-center" id="carPreview" style="display: none;">
+                        <img id="carImage" src="" class="img-fluid rounded shadow"
+                             style="max-width: 300px;" alt="Car Image">
+                        <p class="mt-2 fw-bold" id="carDetails"></p>
+                    </div>
+                </div>
+
+                <!-- Step 4: Booking Form -->
+                <div class="step d-none">
+                    <h5 class="fw-bold">Step 4: Enter Booking Details</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" name="name"
+                                   value="{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email"
+                                   value="{{ Auth::user()->email }}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" name="phone"
+                                   value="{{ Auth::user()->number }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Pickup Date</label>
+                            <input type="date" class="form-control" id="pickupDate" name="pickup_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Dropoff Date</label>
+                            <input type="date" class="form-control" id="dropoffDate" name="dropoff_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Total Days</label>
+                            <input type="text" class="form-control" id="totalDays" name="total_days" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Total Price</label>
+                            <input type="text" class="form-control" id="totalPrice" name="total_price" readonly>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Navigation Buttons -->
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" id="prevStep" class="btn btn-secondary d-none">Previous</button>
+                    <button type="button" id="nextStep" class="btn btn-primary">Next</button>
+                    <button type="submit" id="submitBtn" class="btn btn-success d-none">Confirm Booking</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-<!-- JavaScript for Step Navigation -->
+
+<!-- JavaScript for Step Navigation and Dynamic Calculations -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let stepIndex = 1;
-        const totalSteps = 4;
+ document.addEventListener("DOMContentLoaded", function () {
+    let currentStep = 0;
+    const steps = document.querySelectorAll(".step");
+    const progressBar = document.getElementById("progressBar");
+    const prevStepBtn = document.getElementById("prevStep");
+    const nextStepBtn = document.getElementById("nextStep");
+    const submitBtn = document.getElementById("submitBtn");
 
-        function showStep(step) {
-            for (let i = 1; i <= totalSteps; i++) {
-                document.getElementById('step' + i).classList.add('d-none');
-                document.getElementById('step' + i + '-nav').classList.remove('active');
+    function showStep(stepIndex) {
+        steps.forEach((step, index) => step.classList.toggle("d-none", index !== stepIndex));
+        prevStepBtn.classList.toggle("d-none", stepIndex === 0);
+        nextStepBtn.classList.toggle("d-none", stepIndex === steps.length - 1);
+        submitBtn.classList.toggle("d-none", stepIndex !== steps.length - 1);
+        progressBar.style.width = `${((stepIndex + 1) / steps.length) * 100}%`;
+    }
+
+    function validateStep(stepIndex) {
+        let isValid = true;
+        const inputs = steps[stepIndex].querySelectorAll("input, select");
+        let driveType = document.getElementById("driveType").value;
+
+        inputs.forEach(input => {
+            if (input.id === "route" && driveType === "Self-Drive") {
+                input.classList.remove("is-invalid");
+            } else if (!input.value) {
+                isValid = false;
+                input.classList.add("is-invalid");
+            } else {
+                input.classList.remove("is-invalid");
             }
-            document.getElementById('step' + step).classList.remove('d-none');
-            document.getElementById('step' + step + '-nav').classList.add('active');
-            document.getElementById('progressBar').style.width = (step / totalSteps) * 100 + "%";
-        }
-
-        document.querySelectorAll('.next-step').forEach(button => {
-            button.addEventListener('click', () => {
-                if (stepIndex < totalSteps) {
-                    stepIndex++;
-                    showStep(stepIndex);
-                }
-            });
         });
+        return isValid;
+    }
 
-        document.querySelectorAll('.prev-step').forEach(button => {
-            button.addEventListener('click', () => {
-                if (stepIndex > 1) {
-                    stepIndex--;
-                    showStep(stepIndex);
-                }
-            });
+    nextStepBtn.addEventListener("click", () => {
+        if (validateStep(currentStep) && currentStep < steps.length - 1) {
+            currentStep++;
+            showStep(currentStep);
+        }
+    });
+
+    prevStepBtn.addEventListener("click", () => {
+        if (currentStep > 0) {
+            currentStep--;
+            showStep(currentStep);
+        }
+    });
+
+    document.querySelectorAll("input, select").forEach(input => {
+        input.addEventListener("change", function () {
+            if (this.value) this.classList.remove("is-invalid");
         });
     });
+
+    document.getElementById("carType").addEventListener("change", function () {
+        let carType = this.value;
+        let carSelect = document.getElementById("carId");
+        carSelect.innerHTML = '<option value="">Choose...</option>';
+
+        let cars = @json(\App\Models\Car::all());
+        cars.forEach(car => {
+            if (car.type === carType) {
+                let imagePath = `${window.location.origin}/cars/${car.image}`;
+                carSelect.innerHTML += `<option value="${car.id}" data-price="${car.price}" data-image="${imagePath}" data-details="${car.name} (${car.model}, ${car.seats} seats, ${car.fuel}, ${car.transmission})">${car.name} (${car.model})</option>`;
+            }
+        });
+    });
+
+    let pickupDateInput = document.getElementById("pickupDate");
+    let dropoffDateInput = document.getElementById("dropoffDate");
+    let today = new Date().toISOString().split("T")[0];
+    pickupDateInput.min = today;
+
+    function handleDateChange() {
+        let pickupDate = new Date(pickupDateInput.value);
+        let dropoffDate = new Date(dropoffDateInput.value);
+        dropoffDateInput.min = pickupDateInput.value;
+        if (dropoffDateInput.value && dropoffDate < pickupDate) dropoffDateInput.value = "";
+        calculateTotal();
+    }
+
+    pickupDateInput.addEventListener("change", handleDateChange);
+    dropoffDateInput.addEventListener("change", calculateTotal);
+
+    document.getElementById("carId").addEventListener("change", function () {
+        let selectedCar = this.selectedOptions[0];
+        let imagePath = selectedCar.getAttribute("data-image");
+        let details = selectedCar.getAttribute("data-details");
+
+        document.getElementById("carPreview").style.display = "block";
+        document.getElementById("carImage").src = imagePath;
+        document.getElementById("carDetails").innerText = details;
+        calculateTotal();
+    });
+
+    document.getElementById("driveType").addEventListener("change", function () {
+        let routeSelection = document.getElementById("routeSelection");
+        routeSelection.classList.toggle("d-none", this.value !== "Driver-Driven");
+        calculateTotal();
+    });
+
+    function calculateTotal() {
+        let pickup = new Date(pickupDateInput.value);
+        let dropoff = new Date(dropoffDateInput.value);
+        let totalDays = Math.max(1, (dropoff - pickup) / (1000 * 3600 * 24));
+        let carPrice = document.getElementById("carId").selectedOptions[0]?.getAttribute("data-price") || 0;
+        let driveType = document.getElementById("driveType").value;
+        let additionalCharge = driveType === "Driver-Driven" ? 1500 : 0;
+        let totalPrice = totalDays * carPrice + additionalCharge;
+
+        document.getElementById("totalDays").value = totalDays;
+        document.getElementById("totalPrice").value = `₹ ${totalPrice}`;
+    }
+
+    pickupDateInput.addEventListener("change", calculateTotal);
+    dropoffDateInput.addEventListener("change", calculateTotal);
+    document.getElementById("driveType").addEventListener("change", calculateTotal);
+
+    showStep(currentStep);
+
+});
+
 </script>
-
 @endsection
-<!-- Custom CSS -->
-<style>
-    .drive-option {
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-    }
-
-    .drive-option:hover, .drive-option input:checked + .option-content {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-
-    .drive-option:hover i, .drive-option input:checked + .option-content i {
-        color: white;
-    }
-
-    .drive-option input:checked + .option-content {
-        border-radius: 10px;
-    }
-    .car-option {
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-        height: 250px; /* Ensures uniform height */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .car-option .option-content {
-        text-align: center;
-        width: 100%;
-    }
-
-    .car-img {
-        width: 100px;  /* Fixed width for all images */
-        height: 60px;  /* Fixed height for uniformity */
-        object-fit: contain; /* Ensures images scale correctly */
-    }
-
-    .car-option:hover, .car-option input:checked + .option-content {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-
-    .car-option:hover img, .car-option input:checked + .option-content img {
-        filter: brightness(0) invert(1);
-    }
-
-    .car-option input:checked + .option-content {
-        border-radius: 10px;
-    }
-    .car-option {
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-.car-option:hover, .car-option input:checked + .option-content {
-    background-color: #007bff;
-    color: white;
-    border-color: #007bff;
-}
-
-.car-option:hover img, .car-option input:checked + .option-content img {
-    filter: brightness(0) invert(1);
-}
-
-.car-img {
-    width: 100px;
-    height: 60px;
-    object-fit: cover;
-}
-
-.option-content {
-    border-radius: 10px;
-}
-.input-group-text {
-        border-right: 0;
-    }
-    .form-control {
-        border-left: 0;
-    }
-    .btn {
-        font-weight: bold;
-        border-radius: 8px;
-    }
-
-</style>

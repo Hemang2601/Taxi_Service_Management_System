@@ -18,6 +18,7 @@ class Car extends Model
         'fuel',
         'transmission',
         'type',
-        'image'
+        'image',
+        'status'
     ];
 }

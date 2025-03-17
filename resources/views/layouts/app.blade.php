@@ -201,7 +201,7 @@
                     <!-- Links for Logged-In Users -->
                     <li class="nav-item">
                         <!-- Book Car Link -->
-                        <a class="nav-link {{ request()->routeIs('booking.index') ? 'active' : '' }}" href="{{ route('booking.index') }}">
+                        <a class="nav-link {{ request()->routeIs('booking.form') ? 'active' : '' }}" href="{{ route('booking.form') }}">
                             <i class="fas fa-car-side me-2"></i> Book a Car
                         </a>
                     </li>
@@ -278,11 +278,11 @@
         </div>
     </nav>
 
-    <div class="hero-section @if(in_array(request()->route()->getName(), ['login','service', 'register','booking.index','booking.success', 'history','profile','about','contact','faqs','car-booking.index','booking.step1','booking.step2','booking.step3','booking.step4','booking.confirmation'])) d-none @endif">
+    <div class="hero-section @if(in_array(request()->route()->getName(), ['login','service', 'register','booking.form', 'history','profile','about','contact','faqs'])) d-none @endif">
         <div class="hero-content">
             <h1>Your Ride, Your Way</h1>
             <p>Reliable, Affordable & Safe Taxi Services at Your Fingertips</p>
-            <a href="{{ route('booking.index') }}" class="hero-btn">Book a Ride</a>
+            <a href="{{ route('booking.form') }}" class="hero-btn">Book a Ride</a>
         </div>
     </div>
 

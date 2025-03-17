@@ -5,7 +5,6 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CarBookingController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminPageController;
@@ -35,14 +34,11 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middle
 // Routes for Authenticated Users
 Route::middleware('auth')->group(function () {
     Route::get('/history', [HistoryController::class, 'index'])->name('history'); // Booking history
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile'); // User profile
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Multi-Step Booking Process
-    Route::get('/booking/step1', [BookingController::class, 'step1'])->name('booking.index'); // Select Drive Type
-    Route::post('/booking/step2', [BookingController::class, 'step2'])->name('booking.step2'); // Select Car Type
-    Route::post('/booking/step3', [BookingController::class, 'step3'])->name('booking.step3'); // Select Car
-    Route::post('/booking/step4', [BookingController::class, 'step4'])->name('booking.step4'); // Booking Details
-    Route::post('/booking/confirm', [BookingController::class, 'confirm'])->name('booking.confirm'); // Final Confirmation
+    Route::get('/booking', [BookingController::class, 'showForm'])->name('booking.form');
+    Route::post('/booking', [BookingController::class, 'processBooking'])->name('booking.process');
 });
 
 // Redirect /admin to /admin/login
