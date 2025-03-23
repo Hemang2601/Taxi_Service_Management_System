@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminPageController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TaxiRouteController;
+use App\Http\Controllers\ManageBookingController;
 
 // Public Routes
 Route::get('/', [PageController::class, 'home'])->name('home'); // Homepage
@@ -33,7 +34,10 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout')->middle
 
 // Routes for Authenticated Users
 Route::middleware('auth')->group(function () {
-    Route::get('/history', [HistoryController::class, 'index'])->name('history'); // Booking history
+    Route::get('/history', [HistoryController::class, 'history'])->name('history')->middleware('auth'); // Booking history
+
+   // Route::get('/booking-history', [BookingController::class, 'history'])->name('history')->middleware('auth');
+
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
@@ -58,7 +62,19 @@ Route::prefix('admin')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('admin.users');
         Route::post('/users/update', [UserController::class, 'update'])->name('admin.users.update');
         Route::delete('/users/delete/{id}', [UserController::class, 'delete'])->name('admin.users.delete');
-        Route::get('/bookings', [AdminPageController::class, 'bookings'])->name('admin.bookings');
+
+
+        Route::get('/bookings', [ManageBookingController::class, 'index'])->name('admin.bookings.index');
+        Route::post('/bookings/{id}/update-status', [ManageBookingController::class, 'updateStatus'])->name('admin.bookings.updateStatus');
+        Route::delete('/bookings/{id}', [ManageBookingController::class, 'destroy'])->name('admin.bookings.destroy');
+        Route::put('/bookings/{id}', [ManageBookingController::class, 'update'])->name('admin.bookings.update');
+        Route::get('/bookings/accepted', [ManageBookingController::class, 'acceptedBookings'])->name('admin.bookings.accepted');
+        Route::get('/bookings/history', [ManageBookingController::class, 'history'])->name('admin.bookings.history');
+        Route::post('/bookings/{id}/accepted-status-change', [ManageBookingController::class, 'acceptedStatusChange'])->name('admin.bookings.acceptedStatusChange');
+
+
+
+
         Route::get('/routes', [TaxiRouteController::class, 'index'])->name('admin.routes');
         Route::post('/routes/store', [TaxiRouteController::class, 'store'])->name('admin.routes.store');
         Route::post('/routes/update/{route}', [TaxiRouteController::class, 'update'])->name('admin.routes.update');

@@ -191,7 +191,7 @@
 
                     <!-- Manage Bookings -->
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('admin.bookings') ? 'active' : '' }}" href="{{ route('admin.bookings') }}">
+                        <a class="nav-link {{ request()->routeIs('admin.bookings.index') ? 'active' : '' }}" href="{{ route('admin.bookings.index') }}">
                             <i class="fas fa-book me-2"></i> Manage Bookings
                         </a>
                     </li>
@@ -219,9 +219,9 @@
                 </ul>
 
                 <!-- Admin Logout -->
-                <div class="d-flex ms-lg-3">
+                <div class="d-flex ms-lg">
                     <span class="navbar-text text-white me-3">
-                        Welcome, Admin
+                        Welcome, Hemang
                     </span>
 
                     <!-- Logout Form -->

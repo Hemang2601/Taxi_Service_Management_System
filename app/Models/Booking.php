@@ -14,7 +14,8 @@ class Booking extends Model {
         'phone',
         'pickup_date',
         'dropoff_date',
-        'route_id'
+        'route_id',
+        'price'
     ];
 
     // Relationship: Each booking belongs to a car

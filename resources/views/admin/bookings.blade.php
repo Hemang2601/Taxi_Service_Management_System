@@ -6,114 +6,127 @@
 <div class="container mt-4">
     <h2 class="mb-4 text-center fw-bold">Manage Bookings</h2>
 
-    <!-- Status Tabs -->
-    <ul class="nav nav-pills mb-3 justify-content-center" id="bookingTabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-bs-toggle="tab" href="#pending">Pending</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#confirmed">Confirmed</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#completed">Completed</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#cancelled">Cancelled</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="tab" href="#history">Booking History</a>
-        </li>
-    </ul>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-    <!-- Search Bar -->
-    <div class="row mb-4">
-        <div class="col-md-6 mx-auto">
-            <input type="text" id="searchInput" class="form-control shadow-sm" placeholder="🔍 Search by Booking ID, Customer Name, or Car">
-        </div>
-    </div>
+   <!-- Status Filter Buttons -->
+   <div class="mb-3 d-flex justify-content-center">
+    <a href="{{ route('admin.bookings.index', ['status' => 'pending']) }}" class="btn btn-warning mx-1 {{ request('status') === 'pending' ? 'active' : '' }}">Pending</a>
 
-    <!-- Tab Content -->
-    <div class="tab-content">
-        {{-- <!-- Pending Bookings -->
-        <div class="tab-pane fade show active" id="pending">
-            @include('admin.bookings.partials.booking_table', ['bookings' => $pendingBookings, 'status' => 'pending'])
-        </div>
+    <a href="{{ route('admin.bookings.accepted') }}" class="btn btn-success mx-1 {{ request()->is('admin/bookings/accepted') ? 'active' : '' }}">Accepted</a>
 
-        <!-- Confirmed Bookings -->
-        <div class="tab-pane fade" id="confirmed">
-            @include('admin.bookings.partials.booking_table', ['bookings' => $confirmedBookings, 'status' => 'confirmed'])
-        </div>
+    <a href="{{ route('admin.bookings.history') }}" class="btn btn-secondary mx-1 {{ request()->is('admin/bookings/history') ? 'active' : '' }}">History</a>
+</div>
 
-        <!-- Completed Bookings -->
-        <div class="tab-pane fade" id="completed">
-            @include('admin.bookings.partials.booking_table', ['bookings' => $completedBookings, 'status' => 'completed'])
-        </div>
 
-        <!-- Cancelled Bookings -->
-        <div class="tab-pane fade" id="cancelled">
-            @include('admin.bookings.partials.booking_table', ['bookings' => $cancelledBookings, 'status' => 'cancelled'])
-        </div>
+    <!-- Bookings Table -->
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Car</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Pickup Date</th>
+                    <th>Drop-off Date</th>
+                    <th>Route</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($bookings as $key => $booking)
+                    <tr>
+                        <td>{{ $key + 1 }}</td>
+                        <td>{{ $booking->car->name }} ({{ $booking->car->model }})</td>
+                        <td>{{ $booking->name }} ({{ $booking->email }})</td>
+                        <td>{{ $booking->phone }}</td>
+                        <td>{{ $booking->pickup_date }}</td>
+                        <td>{{ $booking->dropoff_date }}</td>
+                        <td>{{ $booking->route->name ?? 'Self-Drive' }}</td>
+                        <td>₹{{ number_format($booking->price, 2) }}</td>
+                        <td>
+                            <form action="{{ route('admin.bookings.updateStatus', $booking->id) }}" method="POST">
+                                @csrf
+                                <select name="status" class="form-select" onchange="this.form.submit()">
+                                    <option value="" {{ $booking->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="accepted" {{ $booking->status === 'accepted' ? 'selected' : '' }}>Accepted</option>
+                                    <option value="rejected" {{ $booking->status === 'rejected' ? 'selected' : '' }}>Rejected</option>
 
-        <!-- Booking History -->
-        <div class="tab-pane fade" id="history">
-            @include('admin.bookings.partials.booking_table', ['bookings' => $historyBookings, 'status' => 'history'])
-        </div> --}}
+                                </select>
+                            </form>
+                        </td>
+                        <td>
+                            <!-- Edit Button -->
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editBookingModal{{ $booking->id }}">
+                                Edit
+                            </button>
+
+                            <!-- Delete Form -->
+                            <form action="{{ route('admin.bookings.destroy', $booking->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    <!-- Edit Booking Modal -->
+                    <div class="modal fade" id="editBookingModal{{ $booking->id }}" tabindex="-1" aria-labelledby="editBookingModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning text-white">
+                                    <h5 class="modal-title">Edit Booking</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="{{ route('admin.bookings.update', $booking->id) }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Name</label>
+                                            <input type="text" name="name" class="form-control" value="{{ $booking->name }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" name="email" class="form-control" value="{{ $booking->email }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Phone</label>
+                                            <input type="text" name="phone" class="form-control" value="{{ $booking->phone }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Pickup Date</label>
+                                            <input type="date" name="pickup_date" class="form-control" value="{{ $booking->pickup_date }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Drop-off Date</label>
+                                            <input type="date" name="dropoff_date" class="form-control" value="{{ $booking->dropoff_date }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Price</label>
+                                            <input type="number" step="0.01" name="price" class="form-control" value="{{ $booking->price }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Update Booking</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                @empty
+                    <tr>
+                        <td colspan="10" class="text-center">No Bookings Available</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection
-
-@push('styles')
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-    .container {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    }
-    .nav-pills .nav-link {
-        font-weight: bold;
-        border-radius: 20px;
-    }
-    .nav-pills .nav-link.active {
-        background-color: #ffb300;
-    }
-    .table {
-        background: white;
-    }
-    .table th, .table td {
-        text-align: center;
-    }
-    .form-select {
-        width: 150px;
-    }
-</style>
-@endpush
-
-@push('scripts')
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Search Functionality
-        document.getElementById("searchInput").addEventListener("input", function () {
-            let searchQuery = this.value.toLowerCase();
-            document.querySelectorAll("tbody tr").forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(searchQuery) ? "" : "none";
-            });
-        });
-
-        // Status Update AJAX Simulation
-        document.querySelectorAll(".status-dropdown").forEach(select => {
-            select.addEventListener("change", function () {
-                let bookingId = this.dataset.bookingId;
-                let newStatus = this.value;
-
-                console.log(`Updating Booking ID: ${bookingId} to ${newStatus}`);
-
-                alert(`Booking ID ${bookingId} updated to ${newStatus}`);
-            });
-        });
-    });
-</script>
-@endpush

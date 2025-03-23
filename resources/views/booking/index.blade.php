@@ -10,12 +10,35 @@
             <div class="progress mb-4">
                 <div id="progressBar" class="progress-bar bg-success" style="width: 25%;"></div>
             </div>
-
             @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-            <form action="{{ route('booking.process') }}" method="POST">
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        <!-- JavaScript for Auto Dismiss After 2 Seconds -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(() => {
+                const alerts = document.querySelectorAll('.alert');
+                alerts.forEach(alert => {
+                    let bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 2000); // 2000 milliseconds = 2 seconds
+        });
+        </script>
+
+
+            <form action="{{ route('booking.process') }}" method="POST" id="bookingForm">
                 @csrf
 
                 <!-- Step 1: Select Drive Type -->
@@ -30,7 +53,7 @@
                         </select>
                     </div>
 
-                    <!-- Route Selection (Shown only for Driver-Driven) -->
+                    <!-- Route Selection (For Driver-Driven) -->
                     <div class="mb-3 d-none" id="routeSelection">
                         <label class="form-label">Select Route</label>
                         <select class="form-select" id="route" name="route_id">
@@ -41,7 +64,6 @@
                         </select>
                     </div>
                 </div>
-
 
 
                 <!-- Step 2: Select Car Type -->
@@ -128,7 +150,7 @@
 
 <!-- JavaScript for Step Navigation and Dynamic Calculations -->
 <script>
- document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     let currentStep = 0;
     const steps = document.querySelectorAll(".step");
     const progressBar = document.getElementById("progressBar");
@@ -152,7 +174,7 @@
         inputs.forEach(input => {
             if (input.id === "route" && driveType === "Self-Drive") {
                 input.classList.remove("is-invalid");
-            } else if (!input.value) {
+            } else if (!input.value.trim()) {
                 isValid = false;
                 input.classList.add("is-invalid");
             } else {
@@ -178,7 +200,7 @@
 
     document.querySelectorAll("input, select").forEach(input => {
         input.addEventListener("change", function () {
-            if (this.value) this.classList.remove("is-invalid");
+            if (this.value.trim()) this.classList.remove("is-invalid");
         });
     });
 
@@ -187,7 +209,7 @@
         let carSelect = document.getElementById("carId");
         carSelect.innerHTML = '<option value="">Choose...</option>';
 
-        let cars = @json(\App\Models\Car::all());
+        let cars = @json(\App\Models\Car::where('status', 'free')->get());
         cars.forEach(car => {
             if (car.type === carType) {
                 let imagePath = `${window.location.origin}/cars/${car.image}`;
@@ -229,6 +251,17 @@
         calculateTotal();
     });
 
+    document.getElementById("bookingForm").addEventListener("submit", function () {
+    const driveType = document.getElementById("driveType").value;
+    const routeInput = document.getElementById("route");
+
+    // If Self-Drive, set route_id to 0
+    if (driveType === "Self-Drive") {
+        routeInput.value = null;
+    }
+});
+
+
     function calculateTotal() {
         let pickup = new Date(pickupDateInput.value);
         let dropoff = new Date(dropoffDateInput.value);
@@ -247,7 +280,6 @@
     document.getElementById("driveType").addEventListener("change", calculateTotal);
 
     showStep(currentStep);
-
 });
 
 </script>
